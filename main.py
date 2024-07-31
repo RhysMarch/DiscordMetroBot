@@ -8,48 +8,54 @@ from dotenv import load_dotenv
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
-CHANNEL_ID = 1264365566907650128
-last_update = None
+CHANNEL_ID = 1264365566907650128  # Ensure this is the correct channel ID
 
 intents = discord.Intents.default()
-intents.message_content = True
+intents.message_content = True  # Enable message content intent
 
-bot = commands.Bot(command_prefix="!", intents=intents)
+bot = commands.Bot(command_prefix='!', intents=intents)
+
+last_update = ""  # Initialize to empty string for initial update
+message_sent = None  # Variable to track the sent message
 
 
-@tasks.loop(minutes=5)
+@tasks.loop(minutes=1)  # Check for updates every minute
 async def check_metro_updates():
-    global last_update, last_message
-
+    global last_update, message_sent
     url = "https://www.nexus.org.uk/metro/updates"
+
     try:
-        print("Fetching Metro updates...")
         response = requests.get(url)
-        response.raise_for_status()
+        response.raise_for_status()  # Raise an exception for bad responses
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        # Check if the div with updates exists, using a more specific class
-        updates_div = soup.find('div', class_="views-element-container")
+        # Use a more specific selector to find the target div
+        updates_div = soup.find('div', class_='views-row')
         if updates_div:
-            current_update = updates_div.get_text(separator='\n').strip()
+            current_update = updates_div.get_text(separator='\n', strip=True)
 
-            if current_update != last_update:
-                last_update = current_update
+            if current_update != last_update:  # Check for changes
+                last_update = current_update  # Update last_update
                 channel = bot.get_channel(CHANNEL_ID)
+
                 if channel:
-                    if last_message:  # Check if there was a previous message
-                        await last_message.delete()  # Delete the old message
-                    embed = discord.Embed(title="Nexus Metro Updates", description=current_update, color=0x00ff00)
-                    last_message = await channel.send(embed=embed)  # Store the new message
+                    if message_sent:  # Edit existing message if available
+                        await message_sent.edit(content=f"**Nexus Metro Updates:**\n{current_update}")
+                    else:  # Send new message if none exists
+                        message_sent = await channel.send(f"**Nexus Metro Updates:**\n{current_update}")
+
+                    print(f"Sent Metro update: {current_update}")
+        else:
+            print("Updates div not found on the page.")
+
     except (requests.RequestException, AttributeError) as e:
         print(f"Error fetching or parsing updates: {e}")
 
 
-async def main():  # async function to start the bot
-    async with bot:
-        check_metro_updates.start()
-        await bot.start(TOKEN)
+@bot.event
+async def on_ready():  # Send initial message when the bot is ready
+    print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    check_metro_updates.start()  # Start the update task
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+asyncio.run(bot.start(TOKEN))
