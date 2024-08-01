@@ -25,7 +25,7 @@ MAX_MESSAGE_LENGTH = 1900
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-@tasks.loop(minutes=1)
+@tasks.loop(hours=1)  # Check for updates every hour
 async def check_metro_updates():
     global last_updates
     url = "https://www.nexus.org.uk/metro/updates"
@@ -43,15 +43,15 @@ async def check_metro_updates():
                 current_update = ' '.join(current_update.split())
                 current_updates += current_update + "\n\n"
 
+            # Check if there are any new updates
             if current_updates != last_updates:
-                # Summarize the updates using OpenAI API
                 try:
                     response = openai.ChatCompletion.create(
                         model="gpt-3.5-turbo",
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are a helpful assistant that summarizes Metro service updates concisely and clearly, focusing on the key information relevant to passengers. **Do not include any information about reporting anti-social behavior or contact details for the police.** Include the date and time of the update if provided. Keep each summary point to a maximum of two short sentences and use bullet points."
+                                "content": "You are a helpful assistant that summarizes Metro service updates concisely and clearly, focusing on the key information relevant to passengers in bullet points and including any times the updates were posted. Exclude any anti-social behaviour information, and keep it brief."
                             },
                             {
                                 "role": "user",
@@ -62,17 +62,17 @@ async def check_metro_updates():
                     summarized_updates = response.choices[0].message.content.strip()
                 except openai.OpenAIError as e:
                     print(f"Error summarizing updates with OpenAI API: {e}")
-                    summarized_updates = current_updates  # Fall back to original if error
+                    summarized_updates = current_updates
 
                 channel = bot.get_channel(CHANNEL_ID)
                 if channel:
                     # Delete all previous messages in the channel
-                    await channel.purge(limit=None)  # Delete all messages
+                    await channel.purge(limit=None)
 
                     await channel.send(f"**Nexus Metro Updates:**\n{summarized_updates}")
                     print(f"Sent Metro updates: {summarized_updates}")
 
-                last_updates = current_updates
+                last_updates = current_updates  # Update last_updates only if there were changes
         else:
             print("Updates divs not found on the page.")
 
