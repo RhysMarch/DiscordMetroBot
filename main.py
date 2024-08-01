@@ -25,7 +25,7 @@ MAX_MESSAGE_LENGTH = 1900
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-@tasks.loop(hours=30)
+@tasks.loop(minutes=30)
 async def check_metro_updates():
     global last_updates
     url = "https://www.nexus.org.uk/metro/updates"
@@ -39,11 +39,14 @@ async def check_metro_updates():
         if updates_divs:
             current_updates = ""
             for div in updates_divs:
+                # Remove file size information and unnecessary line breaks
+                for a_tag in div.find_all('a'):
+                    if a_tag.text.endswith(')'):
+                        a_tag.decompose()
                 current_update = div.get_text(separator='\n', strip=True)
                 current_update = ' '.join(current_update.split())
                 current_updates += current_update + "\n\n"
 
-            # Check if there are any new updates
             if current_updates != last_updates:
                 try:
                     response = openai.ChatCompletion.create(
@@ -62,17 +65,20 @@ async def check_metro_updates():
                     summarized_updates = response.choices[0].message.content.strip()
                 except openai.OpenAIError as e:
                     print(f"Error summarizing updates with OpenAI API: {e}")
-                    summarized_updates = current_updates
+                    summarized_updates = current_updates  # Fall back to original if error
 
                 channel = bot.get_channel(CHANNEL_ID)
                 if channel:
-                    # Delete all previous messages in the channel
-                    await channel.purge(limit=None)
+                    # Delete all previous messages in the channel except pinned ones
+                    def check_not_pinned(message):
+                        return not message.pinned
+
+                    await channel.purge(limit=None, check=check_not_pinned)
 
                     await channel.send(f"**Nexus Metro Updates:**\n{summarized_updates}")
                     print(f"Sent Metro updates: {summarized_updates}")
 
-                last_updates = current_updates  # Update last_updates only if there were changes
+                last_updates = current_updates
         else:
             print("Updates divs not found on the page.")
 
@@ -85,7 +91,10 @@ async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
-        await channel.purge(limit=None)
+        def check_not_pinned(message):
+            return not message.pinned
+
+        await channel.purge(limit=None, check=check_not_pinned)
     check_metro_updates.start()
 
 
