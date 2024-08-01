@@ -13,11 +13,11 @@ CHANNEL_ID = 1264365566907650128
 
 intents = discord.Intents.default()
 intents.message_content = True
+intents.messages = True
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 last_updates = ""
-message_sent = None
 
 MAX_MESSAGE_LENGTH = 1900
 
@@ -27,7 +27,7 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 
 @tasks.loop(minutes=1)
 async def check_metro_updates():
-    global last_updates, message_sent
+    global last_updates
     url = "https://www.nexus.org.uk/metro/updates"
 
     try:
@@ -51,7 +51,7 @@ async def check_metro_updates():
                         messages=[
                             {
                                 "role": "system",
-                                "content": "You are a helpful assistant that summarizes Metro service updates in a concise and user-friendly manner in bullet points. Focus on the key information relevant to passengers, excluding antisocial behaviour reporting. Include the date and time of the update if provided. Keep each summary point to a maximum of two short sentences."
+                                "content": "You are a helpful assistant that summarizes Metro service updates concisely and clearly, focusing on the key information relevant to passengers. **Do not include any information about reporting anti-social behavior or contact details for the police.** Include the date and time of the update if provided. Keep each summary point to a maximum of two short sentences and use bullet points."
                             },
                             {
                                 "role": "user",
@@ -66,20 +66,10 @@ async def check_metro_updates():
 
                 channel = bot.get_channel(CHANNEL_ID)
                 if channel:
-                    # Split the summarized updates if they exceed the maximum length
-                    if len(summarized_updates) > MAX_MESSAGE_LENGTH:
-                        split_messages = [summarized_updates[i:i + MAX_MESSAGE_LENGTH]
-                                          for i in range(0, len(summarized_updates), MAX_MESSAGE_LENGTH)]
-                        for i, part in enumerate(split_messages):
-                            message_sent = None
-                            header = "**Nexus Metro Updates:**\n" if i == 0 else ""
-                            await channel.send(f"{header}{part}")
-                    else:
-                        if message_sent:
-                            await message_sent.edit(content=f"**Nexus Metro Updates:**\n{summarized_updates}")
-                        else:
-                            message_sent = await channel.send(f"**Nexus Metro Updates:**\n{summarized_updates}")
+                    # Delete all previous messages in the channel
+                    await channel.purge(limit=None)  # Delete all messages
 
+                    await channel.send(f"**Nexus Metro Updates:**\n{summarized_updates}")
                     print(f"Sent Metro updates: {summarized_updates}")
 
                 last_updates = current_updates
@@ -93,6 +83,9 @@ async def check_metro_updates():
 @bot.event
 async def on_ready():
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+    channel = bot.get_channel(CHANNEL_ID)
+    if channel:
+        await channel.purge(limit=None)
     check_metro_updates.start()
 
 
