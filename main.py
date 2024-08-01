@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 CHANNEL_ID = 1264365566907650128
+MAP_IMAGE_PATH = "metro-map-large.png"
 
 intents = discord.Intents.default()
 intents.message_content = True
@@ -18,6 +19,8 @@ intents.messages = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 last_updates = ""
+message_sent = None
+map_message_sent = None
 
 MAX_MESSAGE_LENGTH = 1900
 
@@ -25,9 +28,9 @@ MAX_MESSAGE_LENGTH = 1900
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-@tasks.loop(minutes=30)
+@tasks.loop(hours=1)
 async def check_metro_updates():
-    global last_updates
+    global last_updates, message_sent
     url = "https://www.nexus.org.uk/metro/updates"
 
     try:
@@ -88,13 +91,29 @@ async def check_metro_updates():
 
 @bot.event
 async def on_ready():
+    global map_message_sent
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
+
     channel = bot.get_channel(CHANNEL_ID)
     if channel:
         def check_not_pinned(message):
             return not message.pinned
 
         await channel.purge(limit=None, check=check_not_pinned)
+
+        # Check if the map message already exists and is pinned
+        pins = await channel.pins()
+        for pin in pins:
+            if pin.author == bot.user:
+                map_message_sent = pin
+                break
+
+        if not map_message_sent:
+            with open(MAP_IMAGE_PATH, 'rb') as f:
+                image = discord.File(f)
+                map_message_sent = await channel.send(file=image)
+                await map_message_sent.pin()
+
     check_metro_updates.start()
 
 
