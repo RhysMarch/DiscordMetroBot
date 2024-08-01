@@ -25,7 +25,7 @@ MAX_MESSAGE_LENGTH = 1900
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
-@tasks.loop(hours=1)  # Check for updates every hour
+@tasks.loop(hours=30)
 async def check_metro_updates():
     global last_updates
     url = "https://www.nexus.org.uk/metro/updates"
