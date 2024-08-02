@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 import openai
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
@@ -31,6 +32,14 @@ openai.api_key = os.getenv('OPENAI_API_KEY')
 async def check_metro_updates():
     global last_updates, message_sent
     url = "https://www.nexus.org.uk/metro/updates"
+
+    # Get the current hour
+    current_hour = datetime.now().hour
+
+    # Check if the current time is between 1 AM and 5 AM
+    if 1 <= current_hour <= 5:
+        print("Skipping updates check between 1 AM and 5 AM to save API requests.")
+        return
 
     try:
         response = requests.get(url)
@@ -67,7 +76,7 @@ async def check_metro_updates():
                     summarized_updates = response.choices[0].message.content.strip()
                 except openai.OpenAIError as e:
                     print(f"Error summarizing updates with OpenAI API: {e}")
-                    summarized_updates = current_updates  # Fall back to original if error
+                    summarized_updates = current_updates
 
                 channel = bot.get_channel(CHANNEL_ID)
                 if channel:
