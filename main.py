@@ -24,7 +24,247 @@ map_message_sent = None
 
 MAX_MESSAGE_LENGTH = 1900
 
-# Set your OpenAI API key
+stations = {
+    "Airport": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/APT/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/APT/2"
+    },
+    "Bank Foot": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BFT/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BFT/2"
+    },
+    "Bede": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BDE/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BDE/2"
+    },
+    "Benton": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BTN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BTN/2"
+    },
+    "Brockley Whins": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BNR/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BNR/2"
+    },
+    "Byker": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BYK/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BYK/2"
+    },
+    "Callerton Parkway": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CAL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CAL/2"
+    },
+    "Central Station": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CEN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CEN/2"
+    },
+    "Chichester": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CHI/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CHI/2"
+    },
+    "Chillingham Road": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CRD/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CRD/2"
+    },
+    "Cullercoats": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CUL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CUL/2"
+    },
+    "East Boldon": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/EBL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/EBL/2"
+    },
+    "Fawdon": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FAW/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FAW/2"
+    },
+    "Felling": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FEL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FEL/2"
+    },
+    "Fellgate": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FEG/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FEG/2"
+    },
+    "Four Lane Ends": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FLE/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FLE/2"
+    },
+    "Gateshead": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/GHD/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/GHD/2"
+    },
+    "Gateshead Stadium": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/GST/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/GST/2"
+    },
+    "Hadrian Road": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HDR/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HDR/2"
+    },
+    "Haymarket": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HAY/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HAY/2"
+    },
+    "Hebburn": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HEB/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HEB/2"
+    },
+    "Heworth": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HEW/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HEW/2"
+    },
+    "Howdon": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HOW/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HOW/2"
+    },
+    "Ilford Road": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/ILF/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/ILF/2"
+    },
+    "Jarrow": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/JAR/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/JAR/2"
+    },
+    "Jesmond": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/JES/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/JES/2"
+    },
+    "Kingston Park": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/KSP/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/KSP/2"
+    },
+    "Longbenton": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/LBN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/LBN/2"
+    },
+    "Manors": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MAN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MAN/2"
+    },
+    "Meadow Well": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MWL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MWL/2"
+    },
+    "Millfield": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MLF/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MLF/2"
+    },
+    "Monkseaton": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MSN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MSN/2"
+    },
+    "Monument": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MMT/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MMT/2",
+        "Platform 3": "https://metro-rti.nexus.org.uk/api/times/MMT/3",
+        "Platform 4": "https://metro-rti.nexus.org.uk/api/times/MMT/4"
+    },
+    "Northumberland Park": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/NPK/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/NPK/2"
+    },
+    "North Shields": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/NSH/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/NSH/2"
+    },
+    "Pallion": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PAL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PAL/2"
+    },
+    "Palmersville": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PMV/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PMV/2"
+    },
+    "Park Lane": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PLI/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PLI/2"
+    },
+    "Pelaw": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PLW/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PLW/2"
+    },
+    "Percy Main": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PCM/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PCM/2"
+    },
+    "Regent Centre": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/RGC/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/RGC/2"
+    },
+    "Seaburn": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SBN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SBN/2"
+    },
+    "Shiremoor": {
+            "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SMR/1",
+            "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SMR/2"
+        },
+    "Simonside": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SMD/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SMD/1"
+    },
+    "South Hylton": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SHL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SHL/2"
+    },
+    "South Shields": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SSS/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SSS/2"
+    },
+    "St James": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SJM/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SJM/2"
+    },
+    "St Peter's": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/STZ/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/STZ/2"
+    },
+    "Stadium of Light": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SFC/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SFC/2"
+    },
+    "Sunderland": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SUN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SUN/2"
+    },
+    "Tyne Dock": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/TDK/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/TDK/2"
+    },
+    "Tynemouth": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/TYN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/TYN/2"
+    },
+    "University": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/UNI/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/UNI/2"
+    },
+    "Wallsend": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WSD/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WSD/2"
+    },
+    "Walkergate": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WKG/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WKG/2"
+    },
+    "Wansbeck Road": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WBR/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WBR/2"
+    },
+    "West Jesmond": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WJS/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WJS/2"
+    },
+    "West Monkseaton": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WMN/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WMN/2"
+    },
+    "Whitley Bay": {
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WTL/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WTL/2"
+    },
+}
+
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
