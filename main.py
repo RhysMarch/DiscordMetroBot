@@ -250,12 +250,10 @@ stations = {
     },
     "South Hylton": {
         "code": "SHL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SHL/1",
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SHL/2"
     },
     "South Shields": {
         "code": "SSS",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SSS/1",
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SSS/2"
     },
     "St James": {
