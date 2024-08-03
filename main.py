@@ -246,7 +246,7 @@ stations = {
     "Simonside": {
         "code": "SMD",
         "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SMD/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SMD/1"
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SMD/2"
     },
     "South Hylton": {
         "code": "SHL",
