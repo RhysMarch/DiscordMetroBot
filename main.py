@@ -250,10 +250,14 @@ stations = {
     },
     "South Hylton": {
         "code": "SHL",
+        # To check, like Sunderland
+        # Pop App has only platform 2. Make sure API url is /2 and not /1
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SHL/2"
     },
     "South Shields": {
         "code": "SSS",
+        # To check, like Sunderland
+        # Pop App has only platform 2. Make sure API url is /2 and not /1
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SSS/2"
     },
     "St James": {
@@ -273,8 +277,9 @@ stations = {
     },
     "Sunderland": {
         "code": "SUN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SUN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SUN/2"
+        # Pop app has Platform 2 and 3. Will need to check Platform 2 is not /SUN/1 and Platform 3 is not /SUN/2.
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SUN/2",
+        "Platform 3": "https://metro-rti.nexus.org.uk/api/times/SUN/3"
     },
     "Tyne Dock": {
         "code": "TDK",
