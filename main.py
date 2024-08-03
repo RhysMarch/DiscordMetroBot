@@ -47,9 +47,9 @@ stations = {
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BTN/2"
     },
     "Brockley Whins": {
-        "code": "BNR",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BNR/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BNR/2"
+        "code": "BYW",
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BYW/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BYW/2"
     },
     "Byker": {
         "code": "BYK",
@@ -82,9 +82,9 @@ stations = {
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CUL/2"
     },
     "East Boldon": {
-        "code": "EBL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/EBL/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/EBL/2"
+        "code": "EBO",
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/EBO/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/EBO/2"
     },
     "Fawdon": {
         "code": "FAW",
@@ -97,9 +97,9 @@ stations = {
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FEL/2"
     },
     "Fellgate": {
-        "code": "FEG",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FEG/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FEG/2"
+        "code": "FGT",
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FGT/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FGT/2"
     },
     "Four Lane Ends": {
         "code": "FLE",
@@ -132,9 +132,9 @@ stations = {
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HEB/2"
     },
     "Heworth": {
-        "code": "HEW",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HEW/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HEW/2"
+        "code": "HTH",
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HTH/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HTH/2"
     },
     "Howdon": {
         "code": "HOW",
@@ -187,7 +187,8 @@ stations = {
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MSN/2"
     },
     "Monument": {
-        "code": "MMT",
+        "code": "MTS",
+        "codeTwo": "MTW",
         "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MTS/1",
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MTS/2",
         "Platform 3": "https://metro-rti.nexus.org.uk/api/times/MTW/3",
@@ -262,9 +263,9 @@ stations = {
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SJM/2"
     },
     "St Peter's": {
-        "code": "STZ",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/STZ/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/STZ/2"
+        "code": "MSP",
+        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MSP/1",
+        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MSP/2"
     },
     "Stadium of Light": {
         "code": "SFC",
