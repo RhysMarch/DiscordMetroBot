@@ -330,6 +330,7 @@ stations = {
 
 @tasks.loop(hours=1)
 async def check_metro_updates():
+    """Uses OpenAI API to summarise Nexus Metro updates"""
     global last_updates, message_sent
     url = "https://www.nexus.org.uk/metro/updates"
 
@@ -406,6 +407,7 @@ async def check_metro_updates():
 
 @bot.event
 async def on_ready():
+    """Handles bot setup actions when the bot connects to Discord, including sending a map image and starting the update task."""
     global map_message_sent
     print(f'Logged in as {bot.user} (ID: {bot.user.id})')
 
@@ -441,6 +443,7 @@ async def on_ready():
 
 @bot.tree.command(name="time", description="Retrieves Metro train times for a given station")
 async def get_metro_times(interaction, station_name: str):
+    """Retrieves and sends Metro train times for a specified station, with error handling and close match suggestions."""
     station_name = station_name.lower()  # Case-insensitive matching
     for station, info in stations.items():
         if (
@@ -503,6 +506,7 @@ async def get_metro_times(interaction, station_name: str):
 
 @bot.tree.command(name="help", description="Provides assistance with bot commands")
 async def help_command(interaction: discord.Interaction):
+    """/help command to help users understand the bot """
     embed = discord.Embed(title="MetroBot Help")
     embed.add_field(
         name="Get Train Times",
