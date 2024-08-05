@@ -423,6 +423,12 @@ async def on_ready():
                 map_message_sent = await channel.send(file=image)
                 await map_message_sent.pin()
 
+    try:
+        await bot.tree.sync(guild=discord.Object(id=guild_key))
+        print("Slash commands synced!")
+    except discord.HTTPException as e:
+        print(f"Failed to sync slash commands: {e}")
+
     check_metro_updates.start()
 
 
@@ -485,6 +491,19 @@ async def get_metro_times(ctx, station_name):
             await msg.delete()  # Delete the bot's response message
         except discord.Forbidden:
             print("Could not delete bot message (missing permissions).")
+
+
+@bot.tree.command(name="help", description="Provides assistance with bot commands", guild=discord.Object(id=guild_key))
+async def help_command(interaction: discord.Interaction):
+    embed = discord.Embed(title="MetroBot Help")
+    embed.add_field(
+        name="Get Train Times",
+        value="Type `/time <station>` or `/time <code>` to get the next train times for a station.\n\n"
+              "**Example:**\n`/time Airport`\n `/time APT`",
+        inline=False
+    )
+    embed.set_footer(text="Station codes are listed in the pinned message.")
+    await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
 def split_message(message, max_length=MAX_MESSAGE_LENGTH):
