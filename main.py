@@ -498,7 +498,7 @@ async def get_metro_times(interaction, station_name: str):
                 print(f"Error fetching data for {code} platform {platform_name[-1]}: {e}")
 
     for chunk in split_message(message):
-        await interaction.response.send_message(chunk, ephemeral=False)
+        await interaction.response.send_message(chunk, ephemeral=False, delete_after=300)  # Delete bot response after 5 minutes
 
 
 @bot.tree.command(name="help", description="Provides assistance with bot commands")
