@@ -1,3 +1,4 @@
+import io
 import os
 import discord
 from discord.ext import commands, tasks
@@ -23,7 +24,6 @@ message_sent = None
 map_message_sent = None
 
 MAX_MESSAGE_LENGTH = 1900
-
 
 stations = {
     "Airport": {
@@ -323,6 +323,7 @@ stations = {
         "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WTL/2"
     },
 }
+
 openai.api_key = os.getenv('OPENAI_API_KEY')
 
 
@@ -416,11 +417,82 @@ async def on_ready():
 
         if not map_message_sent:
             with open(MAP_IMAGE_PATH, 'rb') as f:
-                image = discord.File(f)
+                image_data = f.read()
+                image = discord.File(io.BytesIO(image_data), filename=MAP_IMAGE_PATH)
                 map_message_sent = await channel.send(file=image)
                 await map_message_sent.pin()
 
     check_metro_updates.start()
+
+
+@bot.command(name='times', aliases=['time'])
+async def get_metro_times(ctx, station_name):
+    """
+    Retrieves Metro train times for a given station code.
+    """
+    for station, info in stations.items():
+        if (
+                info.get("code") == station_name.upper()
+                or info.get("codeTwo") == station_name.upper()
+                or station.upper() == station_name.upper()
+        ):
+            codes = [info["code"]]
+            if "codeTwo" in info:
+                codes.append(info["codeTwo"])  # Add second code for Monument
+            break  # Exit the loop once a match is found
+    else:
+        await ctx.send("Invalid station name or code. Please try again.")
+        return
+
+    # Determine the station name to display
+    display_name = station_name.capitalize()
+    for name, data in stations.items():
+        if data.get("code") == station_name.upper() or data.get("codeTwo") == station_name.upper():
+            display_name = name  # Use the full station name if found
+            break
+
+    message = f"**{display_name}:**\n"
+
+    for code in codes:
+        for platform, url in stations[display_name.title()].items():
+            if platform in ["code", "codeTwo"]:  # Skip non-platform entries
+                continue
+            if not url.startswith(f"https://metro-rti.nexus.org.uk/api/times/{code}/"):
+                continue  # Skip platforms with different codes
+
+            try:
+                response = requests.get(url)
+                response.raise_for_status()
+                data = response.json()
+                due_times = [f"{entry['dueIn']} minutes" for entry in data if entry["dueIn"] > 0]
+                formatted_times = ", ".join(due_times) or "No trains due"
+                message += f"Platform {platform[-1]}: {formatted_times}\n"
+
+            except requests.RequestException as e:
+                message += f"Platform {platform[-1]}: Error fetching data\n"
+                print(f"Error fetching data for {code} platform {platform[-1]}: {e}")  # Use 'code' here
+
+    # Split the message into chunks if it exceeds the character limit
+    for chunk in split_message(message):
+        await ctx.send(chunk)
+
+
+def split_message(message, max_length=MAX_MESSAGE_LENGTH):
+    """Splits a long message into chunks of up to max_length characters."""
+    if len(message) <= max_length:
+        return [message]
+
+    chunks = []
+    current_chunk = ""
+    for line in message.splitlines():
+        if len(current_chunk) + len(line) + 1 > max_length:  # +1 for the newline
+            chunks.append(current_chunk)
+            current_chunk = ""
+        current_chunk += line + "\n"
+
+    if current_chunk:
+        chunks.append(current_chunk)
+    return chunks
 
 
 bot.run(TOKEN)
