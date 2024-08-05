@@ -1,3 +1,4 @@
+import difflib
 import io
 import os
 import discord
@@ -30,299 +31,299 @@ MAX_MESSAGE_LENGTH = 1900
 stations = {
     "Airport": {
         "code": "APT",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/APT/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/APT/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/APT/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/APT/2"
     },
     "Bank Foot": {
         "code": "BFT",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BFT/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BFT/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/BFT/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/BFT/2"
     },
     "Bede": {
         "code": "BDE",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BDE/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BDE/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/BDE/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/BDE/2"
     },
     "Benton": {
         "code": "BTN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BTN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BTN/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/BTN/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/BTN/2"
     },
     "Brockley Whins": {
         "code": "BYW",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BYW/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BYW/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/BYW/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/BYW/2"
     },
     "Byker": {
         "code": "BYK",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/BYK/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/BYK/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/BYK/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/BYK/2"
     },
     "Callerton Parkway": {
         "code": "CAL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CAL/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CAL/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/CAL/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/CAL/2"
     },
     "Central Station": {
         "code": "CEN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CEN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CEN/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/CEN/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/CEN/2"
     },
     "Chichester": {
         "code": "CHI",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CHI/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CHI/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/CHI/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/CHI/2"
     },
     "Chillingham Road": {
         "code": "CRD",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CRD/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CRD/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/CRD/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/CRD/2"
     },
     "Cullercoats": {
         "code": "CUL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/CUL/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/CUL/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/CUL/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/CUL/2"
     },
     "East Boldon": {
         "code": "EBO",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/EBO/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/EBO/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/EBO/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/EBO/2"
     },
     "Fawdon": {
         "code": "FAW",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FAW/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FAW/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/FAW/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/FAW/2"
     },
     "Felling": {
         "code": "FEL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FEL/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FEL/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/FEL/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/FEL/2"
     },
     "Fellgate": {
         "code": "FGT",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FGT/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FGT/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/FGT/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/FGT/2"
     },
     "Four Lane Ends": {
         "code": "FLE",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/FLE/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/FLE/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/FLE/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/FLE/2"
     },
     "Gateshead": {
         "code": "GHD",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/GHD/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/GHD/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/GHD/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/GHD/2"
     },
     "Gateshead Stadium": {
         "code": "GST",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/GST/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/GST/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/GST/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/GST/2"
     },
     "Hadrian Road": {
         "code": "HDR",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HDR/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HDR/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/HDR/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/HDR/2"
     },
     "Haymarket": {
         "code": "HAY",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HAY/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HAY/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/HAY/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/HAY/2"
     },
     "Hebburn": {
         "code": "HEB",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HEB/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HEB/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/HEB/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/HEB/2"
     },
     "Heworth": {
         "code": "HTH",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HTH/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HTH/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/HTH/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/HTH/2"
     },
     "Howdon": {
         "code": "HOW",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/HOW/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/HOW/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/HOW/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/HOW/2"
     },
     "Ilford Road": {
         "code": "ILF",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/ILF/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/ILF/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/ILF/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/ILF/2"
     },
     "Jarrow": {
         "code": "JAR",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/JAR/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/JAR/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/JAR/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/JAR/2"
     },
     "Jesmond": {
         "code": "JES",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/JES/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/JES/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/JES/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/JES/2"
     },
     "Kingston Park": {
         "code": "KSP",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/KSP/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/KSP/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/KSP/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/KSP/2"
     },
     "Longbenton": {
         "code": "LBN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/LBN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/LBN/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/LBN/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/LBN/2"
     },
     "Manors": {
         "code": "MAN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MAN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MAN/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/MAN/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/MAN/2"
     },
     "Meadow Well": {
         "code": "MWL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MWL/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MWL/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/MWL/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/MWL/2"
     },
     "Millfield": {
         "code": "MLF",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MLF/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MLF/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/MLF/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/MLF/2"
     },
     "Monkseaton": {
         "code": "MSN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MSN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MSN/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/MSN/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/MSN/2"
     },
     "Monument": {
         "code": "MTS",
         "codeTwo": "MTW",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MTS/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MTS/2",
-        "Platform 3": "https://metro-rti.nexus.org.uk/api/times/MTW/3",
-        "Platform 4": "https://metro-rti.nexus.org.uk/api/times/MTW/4"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/MTS/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/MTS/2",
+        "Platform 3 (Towards South Shields via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/MTW/3",
+        "Platform 4 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/MTW/4"
     },
     "Northumberland Park": {
         "code": "NPK",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/NPK/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/NPK/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/NPK/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/NPK/2"
     },
     "North Shields": {
         "code": "NSH",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/NSH/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/NSH/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/NSH/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/NSH/2"
     },
     "Pallion": {
         "code": "PAL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PAL/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PAL/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/PAL/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/PAL/2"
     },
     "Palmersville": {
         "code": "PMV",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PMV/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PMV/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/PMV/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/PMV/2"
     },
     "Park Lane": {
         "code": "PLI",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PLI/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PLI/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/PLI/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/PLI/2"
     },
     "Pelaw": {
         "code": "PLW",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PLW/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PLW/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/PLW/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/PLW/2"
     },
     "Percy Main": {
         "code": "PCM",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/PCM/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/PCM/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/PCM/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/PCM/2"
     },
     "Regent Centre": {
         "code": "RGC",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/RGC/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/RGC/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/RGC/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/RGC/2"
     },
     "Seaburn": {
         "code": "SBN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SBN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SBN/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/SBN/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/SBN/2"
     },
     "Shiremoor": {
         "code": "SMR",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SMR/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SMR/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/SMR/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/SMR/2"
     },
     "Simonside": {
         "code": "SMD",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SMD/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SMD/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/SMD/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/SMD/2"
     },
     "South Hylton": {
         "code": "SHL",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SHL/2"
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/SHL/2"
     },
     "South Shields": {
         "code": "SSS",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SSS/2"
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/SSS/2"
     },
     "St James": {
         "code": "SJM",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SJM/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SJM/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/SJM/1",
+        "Platform 2 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/SJM/2"
     },
     "St Peter's": {
         "code": "MSP",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/MSP/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/MSP/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/MSP/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/MSP/2"
     },
     "Stadium of Light": {
         "code": "SFC",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/SFC/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SFC/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/SFC/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/SFC/2"
     },
     "Sunderland": {
         "code": "SUN",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/SUN/2",
-        "Platform 3": "https://metro-rti.nexus.org.uk/api/times/SUN/3"
+        "Platform 2 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/SUN/2",
+        "Platform 3 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/SUN/3"
     },
     "Tyne Dock": {
         "code": "TDK",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/TDK/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/TDK/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/TDK/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/TDK/2"
     },
     "Tynemouth": {
         "code": "TYN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/TYN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/TYN/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/TYN/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/TYN/2"
     },
     "University": {
         "code": "UNI",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/UNI/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/UNI/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/UNI/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/UNI/2"
     },
     "Wallsend": {
         "code": "WSD",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WSD/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WSD/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/WSD/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/WSD/2"
     },
     "Walkergate": {
         "code": "WKG",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WKG/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WKG/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/WKG/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/WKG/2"
     },
     "Wansbeck Road": {
         "code": "WBR",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WBR/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WBR/2"
+        "Platform 1 (Towards South Hylton)": "https://metro-rti.nexus.org.uk/api/times/WBR/1",
+        "Platform 2 (Towards Airport)": "https://metro-rti.nexus.org.uk/api/times/WBR/2"
     },
     "West Jesmond": {
         "code": "WJS",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WJS/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WJS/2"
+        "Platform 1 (Towards South Hylton and South Shields)": "https://metro-rti.nexus.org.uk/api/times/WJS/1",
+        "Platform 2 (Towards Airport and St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/WJS/2"
     },
     "West Monkseaton": {
         "code": "WMN",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WMN/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WMN/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/WMN/1",
+        "Platform 2 (Towards St. James via Whitley Bay)": "https://metro-rti.nexus.org.uk/api/times/WMN/2"
     },
     "Whitley Bay": {
         "code": "WTL",
-        "Platform 1": "https://metro-rti.nexus.org.uk/api/times/WTL/1",
-        "Platform 2": "https://metro-rti.nexus.org.uk/api/times/WTL/2"
+        "Platform 1 (Towards South Shields)": "https://metro-rti.nexus.org.uk/api/times/WTL/1",
+        "Platform 2 (Towards St. James)": "https://metro-rti.nexus.org.uk/api/times/WTL/2"
     },
 }
 
@@ -440,31 +441,38 @@ async def on_ready():
 
 @bot.tree.command(name="time", description="Retrieves Metro train times for a given station")
 async def get_metro_times(interaction, station_name: str):
+    station_name = station_name.lower()  # Case-insensitive matching
     for station, info in stations.items():
         if (
-            info.get("code") == station_name.upper()
-            or info.get("codeTwo") == station_name.upper()
-            or station.upper() == station_name.upper()
+                info.get("code").lower() == station_name
+                or info.get("codeTwo", "").lower() == station_name
+                or station.lower() == station_name
         ):
             codes = [info["code"]]
             if "codeTwo" in info:
                 codes.append(info["codeTwo"])  # Add second code for Monument
-            break  # Exit the loop once a match is found
+            break
     else:
-        await interaction.response.send_message("Invalid station name or code. Please try again.", ephemeral=True)
+        close_matches = difflib.get_close_matches(station_name, stations.keys(), n=3, cutoff=0.6)
+        if close_matches:
+            suggestions = ", ".join(close_matches)
+            error_message = f"Invalid station name or code. Did you mean: {suggestions}?"
+        else:
+            error_message = "Invalid station name or code. Please try again."
+        await interaction.response.send_message(error_message, ephemeral=True)
         return
 
     display_name = station_name.capitalize()
     for name, data in stations.items():
-        if data.get("code") == station_name.upper() or data.get("codeTwo") == station_name.upper():
+        if data.get("code").lower() == station_name or data.get("codeTwo", "").lower() == station_name:
             display_name = name  # Use the full station name if found
             break
 
     message = f"**{display_name}:**\n"
 
     for code in codes:
-        for platform, url in stations[display_name.title()].items():
-            if platform in ["code", "codeTwo"]:  # Skip non-platform entries
+        for platform_name, url in stations[display_name.title()].items():
+            if platform_name in ["code", "codeTwo"]:  # Skip non-platform entries
                 continue
             if not url.startswith(f"https://metro-rti.nexus.org.uk/api/times/{code}/"):
                 continue  # Skip platforms with different codes
@@ -475,10 +483,19 @@ async def get_metro_times(interaction, station_name: str):
                 data = response.json()
                 due_times = [f"{entry['dueIn']} minutes" for entry in data if entry["dueIn"] > 0]
                 formatted_times = ", ".join(due_times) or "No trains due"
-                message += f"Platform {platform[-1]}: {formatted_times}\n"
+
+                start_index = platform_name.find("(")
+                end_index = platform_name.find(")") + 1
+                bracketed_info = platform_name[start_index:end_index] if start_index != -1 and end_index != 0 else ""
+
+                # Use the first character of platform_name as the platform number
+                platform_number = ''.join(filter(str.isdigit, platform_name))
+
+                message += f"Platform {platform_number} {bracketed_info}: {formatted_times}\n"
+
             except requests.RequestException as e:
-                message += f"Platform {platform[-1]}: Error fetching data\n"
-                print(f"Error fetching data for {code} platform {platform[-1]}: {e}")
+                message += f"Platform {platform_name[-1]}: Error fetching data\n"
+                print(f"Error fetching data for {code} platform {platform_name[-1]}: {e}")
 
     for chunk in split_message(message):
         await interaction.response.send_message(chunk, ephemeral=False)
