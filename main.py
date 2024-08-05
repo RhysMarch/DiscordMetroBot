@@ -11,7 +11,7 @@ from datetime import datetime
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
 openai.api_key = os.getenv('OPENAI_API_KEY')
-guild_key = os.getenv('GUILD_KEY')  # for later use
+guild_key = os.getenv('GUILD_KEY')
 CHANNEL_ID = 1264365566907650128
 MAP_IMAGE_PATH = "metro-map-large.png"
 
@@ -340,60 +340,67 @@ async def check_metro_updates():
         print("Skipping updates check between 1 AM and 5 AM to save API requests.")
         return
 
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        soup = BeautifulSoup(response.content, 'html.parser')
+    # Get the list of guild keys from the environment variable
+    guild_keys = [int(key) for key in guild_key.split(",")]
 
-        updates_divs = soup.find_all('div', class_='views-row')
-        if updates_divs:
-            current_updates = ""
-            for div in updates_divs:
-                # Remove file size information and unnecessary line breaks
-                for a_tag in div.find_all('a'):
-                    if a_tag.text.endswith(')'):
-                        a_tag.decompose()
-                current_update = div.get_text(separator='\n', strip=True)
-                current_update = ' '.join(current_update.split())
-                current_updates += current_update + "\n\n"
+    # Only give updates if the server ID is in the .env file
+    if any(bot.get_guild(guild_id) for guild_id in guild_keys):
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+            soup = BeautifulSoup(response.content, 'html.parser')
 
-            if current_updates != last_updates:
-                try:
-                    response = openai.ChatCompletion.create(
-                        model="gpt-3.5-turbo",
-                        messages=[
-                            {
-                                "role": "system",
-                                "content": "You are a helpful assistant that summarizes Metro service updates concisely and clearly, focusing on the key information relevant to passengers in bullet points and including any times the updates were posted. Exclude any anti-social behaviour information, and keep it brief."
-                            },
-                            {
-                                "role": "user",
-                                "content": f"Please summarize these Metro updates:\n{current_updates}"
-                            }
-                        ]
-                    )
-                    summarized_updates = response.choices[0].message.content.strip()
-                except openai.OpenAIError as e:
-                    print(f"Error summarizing updates with OpenAI API: {e}")
-                    summarized_updates = current_updates
+            updates_divs = soup.find_all('div', class_='views-row')
+            if updates_divs:
+                current_updates = ""
+                for div in updates_divs:
+                    # Remove file size information and unnecessary line breaks
+                    for a_tag in div.find_all('a'):
+                        if a_tag.text.endswith(')'):
+                            a_tag.decompose()
+                    current_update = div.get_text(separator='\n', strip=True)
+                    current_update = ' '.join(current_update.split())
+                    current_updates += current_update + "\n\n"
 
-                channel = bot.get_channel(CHANNEL_ID)
-                if channel:
-                    # Delete all previous messages in the channel except pinned ones
-                    def check_not_pinned(message):
-                        return not message.pinned
+                if current_updates != last_updates:
+                    try:
+                        response = openai.ChatCompletion.create(
+                            model="gpt-3.5-turbo",
+                            messages=[
+                                {
+                                    "role": "system",
+                                    "content": "You are a helpful assistant that summarizes Metro service updates concisely and clearly, focusing on the key information relevant to passengers in bullet points and including any times the updates were posted. Exclude any anti-social behaviour information, and keep it brief."
+                                },
+                                {
+                                    "role": "user",
+                                    "content": f"Please summarize these Metro updates:\n{current_updates}"
+                                }
+                            ]
+                        )
+                        summarized_updates = response.choices[0].message.content.strip()
+                    except openai.OpenAIError as e:
+                        print(f"Error summarizing updates with OpenAI API: {e}")
+                        summarized_updates = current_updates
 
-                    await channel.purge(limit=None, check=check_not_pinned)
+                    channel = bot.get_channel(CHANNEL_ID)
+                    if channel:
+                        # Delete all previous messages in the channel except pinned ones
+                        def check_not_pinned(message):
+                            return not message.pinned
 
-                    await channel.send(f"**Nexus Metro Updates:**\n{summarized_updates}")
-                    print(f"Sent Metro updates: {summarized_updates}")
+                        await channel.purge(limit=None, check=check_not_pinned)
 
-                last_updates = current_updates
-        else:
-            print("Updates divs not found on the page.")
+                        await channel.send(f"**Nexus Metro Updates:**\n{summarized_updates}")
+                        print(f"Sent Metro updates: {summarized_updates}")
 
-    except (requests.RequestException, AttributeError) as e:
-        print(f"Error fetching or parsing updates: {e}")
+                    last_updates = current_updates
+            else:
+                print("Updates divs not found on the page.")
+
+        except (requests.RequestException, AttributeError) as e:
+            print(f"Error fetching or parsing updates: {e}")
+    else:
+        print("Bot is not in any of the specified guilds. Skipping Metro updates check.")
 
 
 @bot.event
@@ -423,7 +430,7 @@ async def on_ready():
                 await map_message_sent.pin()
 
     try:
-        await bot.tree.sync(guild=discord.Object(id=guild_key))
+        await bot.tree.sync()
         print("Slash commands synced!")
     except discord.HTTPException as e:
         print(f"Failed to sync slash commands: {e}")
@@ -431,7 +438,7 @@ async def on_ready():
     check_metro_updates.start()
 
 
-@bot.tree.command(name="time", description="Retrieves Metro train times for a given station", guild=discord.Object(id=guild_key))
+@bot.tree.command(name="time", description="Retrieves Metro train times for a given station")
 async def get_metro_times(interaction, station_name: str):
     for station, info in stations.items():
         if (
@@ -477,7 +484,7 @@ async def get_metro_times(interaction, station_name: str):
         await interaction.response.send_message(chunk, ephemeral=False)
 
 
-@bot.tree.command(name="help", description="Provides assistance with bot commands", guild=discord.Object(id=guild_key))
+@bot.tree.command(name="help", description="Provides assistance with bot commands")
 async def help_command(interaction: discord.Interaction):
     embed = discord.Embed(title="MetroBot Help")
     embed.add_field(
