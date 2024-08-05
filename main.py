@@ -1,3 +1,4 @@
+import asyncio
 import io
 import os
 import discord
@@ -10,6 +11,8 @@ from datetime import datetime
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+openai.api_key = os.getenv('OPENAI_API_KEY')
+guild_key = os.getenv('GUILD_KEY')  # for later use
 CHANNEL_ID = 1264365566907650128
 MAP_IMAGE_PATH = "metro-map-large.png"
 
@@ -324,8 +327,6 @@ stations = {
     },
 }
 
-openai.api_key = os.getenv('OPENAI_API_KEY')
-
 
 @tasks.loop(hours=1)
 async def check_metro_updates():
@@ -470,11 +471,20 @@ async def get_metro_times(ctx, station_name):
 
             except requests.RequestException as e:
                 message += f"Platform {platform[-1]}: Error fetching data\n"
-                print(f"Error fetching data for {code} platform {platform[-1]}: {e}")  # Use 'code' here
+                print(f"Error fetching data for {code} platform {platform[-1]}: {e}")
 
-    # Split the message into chunks if it exceeds the character limit
+    try:
+        await ctx.message.delete()  # Delete the user's command message to keep channel clean
+    except discord.Forbidden:
+        print("Could not delete user message (missing permissions).")
+
     for chunk in split_message(message):
-        await ctx.send(chunk)
+        msg = await ctx.send(chunk)
+        await asyncio.sleep(300)  # Wait for 5 minutes (300 seconds)
+        try:
+            await msg.delete()  # Delete the bot's response message
+        except discord.Forbidden:
+            print("Could not delete bot message (missing permissions).")
 
 
 def split_message(message, max_length=MAX_MESSAGE_LENGTH):
