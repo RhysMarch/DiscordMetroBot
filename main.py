@@ -432,26 +432,22 @@ async def on_ready():
     check_metro_updates.start()
 
 
-@bot.command(name='times', aliases=['time'])
-async def get_metro_times(ctx, station_name):
-    """
-    Retrieves Metro train times for a given station code.
-    """
+@bot.tree.command(name="time", description="Retrieves Metro train times for a given station", guild=discord.Object(id=guild_key))
+async def get_metro_times(interaction, station_name: str):
     for station, info in stations.items():
         if (
-                info.get("code") == station_name.upper()
-                or info.get("codeTwo") == station_name.upper()
-                or station.upper() == station_name.upper()
+            info.get("code") == station_name.upper()
+            or info.get("codeTwo") == station_name.upper()
+            or station.upper() == station_name.upper()
         ):
             codes = [info["code"]]
             if "codeTwo" in info:
                 codes.append(info["codeTwo"])  # Add second code for Monument
             break  # Exit the loop once a match is found
     else:
-        await ctx.send("Invalid station name or code. Please try again.")
+        await interaction.response.send_message("Invalid station name or code. Please try again.", ephemeral=True)
         return
 
-    # Determine the station name to display
     display_name = station_name.capitalize()
     for name, data in stations.items():
         if data.get("code") == station_name.upper() or data.get("codeTwo") == station_name.upper():
@@ -474,23 +470,12 @@ async def get_metro_times(ctx, station_name):
                 due_times = [f"{entry['dueIn']} minutes" for entry in data if entry["dueIn"] > 0]
                 formatted_times = ", ".join(due_times) or "No trains due"
                 message += f"Platform {platform[-1]}: {formatted_times}\n"
-
             except requests.RequestException as e:
                 message += f"Platform {platform[-1]}: Error fetching data\n"
                 print(f"Error fetching data for {code} platform {platform[-1]}: {e}")
 
-    try:
-        await ctx.message.delete()  # Delete the user's command message to keep channel clean
-    except discord.Forbidden:
-        print("Could not delete user message (missing permissions).")
-
     for chunk in split_message(message):
-        msg = await ctx.send(chunk)
-        await asyncio.sleep(300)  # Wait for 5 minutes (300 seconds)
-        try:
-            await msg.delete()  # Delete the bot's response message
-        except discord.Forbidden:
-            print("Could not delete bot message (missing permissions).")
+        await interaction.response.send_message(chunk, ephemeral=False)
 
 
 @bot.tree.command(name="help", description="Provides assistance with bot commands", guild=discord.Object(id=guild_key))
