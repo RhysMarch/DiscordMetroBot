@@ -12,6 +12,8 @@ This Discord bot provides Tyne and Wear Metro service updates and train times.
 
 /time <station name/code>: Get train times for a station (e.g., /time Airport or /time APT).
 
+/help : Get help with how to use the bot.
+
 ## Nexus Metro API
 This bot fetches live train times directly from the Nexus Metro API.
 
