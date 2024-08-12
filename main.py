@@ -441,6 +441,7 @@ async def on_ready():
     check_metro_updates.start()
 
 
+# TODO: Permanent live station updates, pinned message feature
 @bot.tree.command(name="time", description="Retrieves Metro train times for a given station")
 async def get_metro_times(interaction, station_name: str):
     """Retrieves and sends Metro train times for a specified station, with error handling and close match suggestions."""
@@ -501,7 +502,8 @@ async def get_metro_times(interaction, station_name: str):
                 print(f"Error fetching data for {code} platform {platform_name[-1]}: {e}")
 
     for chunk in split_message(message):
-        await interaction.response.send_message(chunk, ephemeral=False, delete_after=300)  # Delete bot response after 5 minutes
+        await interaction.response.send_message(chunk, ephemeral=False,
+                                                delete_after=300)  # Delete bot response after 5 minutes
 
 
 @bot.tree.command(name="help", description="Provides assistance with bot commands")
@@ -518,6 +520,7 @@ async def help_command(interaction: discord.Interaction):
     await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+# TODO: feat: /favourites add <station> & /favourites to show times for favourited stations
 def split_message(message, max_length=MAX_MESSAGE_LENGTH):
     """Splits a long message into chunks of up to max_length characters."""
     if len(message) <= max_length:
