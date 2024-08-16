@@ -5,7 +5,7 @@ This Discord bot provides Tyne and Wear Metro service updates and train times.
 - **Automatic Updates**: Fetches and summarises Metro service updates hourly from the Nexus website, posting them to a dedicated channel.
 - **Train Times**: Use the /time <station> command to get the next upcoming train times for any Metro station.
 - **Map**: Displays a pinned map of the Metro network for quick reference.
-- The bot skips checking for updates between 1 AM and 5 AM to reduce API requests.
+- The bot skips checking for updates between 1 AM and 5 AM to reduce API requests. The bot also does not provide updates if there is nothing changed.
 - Times are deleted after 5 minutes to keep the info fresh
 
 ## Usage
